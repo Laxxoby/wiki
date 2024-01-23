@@ -1,0 +1,26 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    {{name}} - Encyclopedia
+{% endblock %}
+
+{% block body %}
+
+    {% if newlist %}
+
+        <h1>Search related to "{{name}}"</h1>
+
+        <ul>
+            {% for entry in newlist %}
+            <a href="{% url 'encyclopedia:page' entry %}"><li>{{ entry }}</li></a>
+            {% endfor %}
+        </ul>
+
+    {% else %}
+
+        <h1>No results found related to "{{name}}"</h1>
+
+    {% endif %}
+    
+
+{% endblock %}
