@@ -3,6 +3,8 @@ from django.http import Http404
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django import forms
+import re
+import random
 import markdown2
 
 from . import util
@@ -88,7 +90,7 @@ def create(request):
 
 def edit(request, title):
     if request.method == "POST":
-        form = FormCreate(request.POST)
+        form = FormEdit(request.POST)
         if form.is_valid():
             Content = form.cleaned_data["content_page"]
             util.save_entry(title.capitalize(), Content)
@@ -101,6 +103,8 @@ def edit(request, title):
             })
     else:
         content = util.get_entry(title)
+        content = re.sub('\r+\n', '-', content)
+        content = re.sub('-{2,}', '\n\n', content)
         
         initial_data = {'content_page': content} if content else {}
         form = FormEdit(request.POST or None, initial=initial_data)
@@ -110,3 +114,8 @@ def edit(request, title):
                 "title": title,
                 "form": form,
             })
+        
+def randomEntry(request):
+    listE = util.list_entries()
+    entry_aleatorio = random.choice(listE)
+    return HttpResponseRedirect(reverse('encyclopedia:page', args=[entry_aleatorio]))        
